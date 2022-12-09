@@ -1,0 +1,162 @@
+html{
+  font-family: sans-serif;
+    font-size: 20px;
+color: #997a00;
+}
+
+body {
+  background-image: url("can_wp.jpg");
+}
+
+header {
+  border: 3px solid black;
+  border-radius: 20px;
+  text-align: center;
+  background-color: LightGreen;
+  color: #997a00;
+  display: flex;
+  flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+#hdr-row1 {
+  text-align: center;
+  background-color: LightGreen;
+  color: #997a00;
+  display: flex;
+  flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+
+}
+
+#hdr-row2 {
+  text-align: center;
+  background-color: LightGreen;
+  color: #777a00;
+  /* display: flex;
+  flex-direction: row;
+    justify-content: space-around;
+    align-items: center; */
+
+}
+
+#hdr-row1 > img {
+  padding: 20px;
+  width: 100px;
+  height: 80px;
+}
+
+table {
+  background-color: LightGreen;
+  margin-right: auto;
+  margin-left: auto;
+  margin-top: 30px;
+  border: 1px solid black;
+}
+
+th{
+  background-color: DarkGreen;
+  height: 25px;
+  padding: 10px;
+  color: white;
+}
+
+td {
+  padding: 5px;
+  text-align: center;
+}
+
+#div-oil {
+  margin-top: 30px;
+  padding: 5px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  border: 1px black solid;
+  margin-left: auto;
+  margin-right: auto;
+  background: LightGreen;
+  align-items:  baseline;
+  width: 300px;
+}
+
+#warning {
+  color: orange;
+  margin-top: 30px;
+  padding: 5px;
+/*  display: flex; */
+  flex-direction: row;
+  justify-content: center;
+  border: 1px black solid;
+  margin-left: auto;
+  margin-right: auto;
+  background: LightGreen;
+  align-items:  baseline;
+  width: 600px;
+  text-align: center;
+}
+
+#div-oil > input {
+  text-align: right;
+}
+
+#btn-calc, #div-btn-clip {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+#output-table1, #output-table2 {
+  background: LightGreen;
+  border: 1px black solid;
+  border-radius: 20px;
+  padding: 10px;
+  /*display: none; */
+  flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+
+}
+
+input {
+  font-family: sans-serif;
+  font-size: 20px;
+  color: #997a00;
+}
+
+button {
+  padding: 5px;
+  color: white;
+  background-color: DarkGreen;
+  border-radius: 5px;
+  font-size: 20px;
+  border:1px black solid;
+
+}
+
+input:invalid {
+  border: 2px solid red;
+}
+
+.input-numeric {
+  text-align: right;
+}
+
+.top-border {
+  border-top: 2px solid #111;
+}
+
+.offscreen
+ {
+ clip-path: inset(100%);
+ clip: rect(1px 1px 1px 1px); /* IE 6/7 */
+  clip: rect(1px, 1px, 1px, 1px);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: pre; /* I had to modify this - it was "nowrap" - but that dropped newlines from clipboard copy operations */
+  width: 1px;
+ }

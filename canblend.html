@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Canblend</title>
+    <link rel="stylesheet" href="canblend.css">
+  </head>
+  <body>
+    <header>
+        <div id="hdr-row1">
+          <img src="Quebec_Weed_Flag.png"></img>
+          <h1>&#147;Product&#148; Blend Calculator</h1>
+          <img src="Quebec_Weed_Flag.png"></img>
+      </div>
+      <div  id="hdr-row2">
+        <b>Safari Alert!</b> For correct tab sequencing, either use option-Tab, <b>OR</b> enable <i>Preferences > Advanced > Press tab to highlight each item on a page</i> in Safari preferences.
+      </div>
+    </header>
+    <table id="input-table">
+      <thead>
+        <tr>
+          <th colspan="5">Inputs</th>
+        </tr>
+        <tr>
+          <th>
+            Product
+          </th>
+          <th>
+            Amount(g)
+          </th>
+          <th>
+            THC(%)
+          </th>
+          <th>
+            CBD(%)
+          </th>
+          <th>
+
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="5">
+            <button name="btnAddRow" id="btn-add-row" onclick="appendRow(document.getElementById('input-table'))">Add a row</button>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <div id="div-oil">
+      <label for="oil">Amount of oil (ml)</label>
+      <input type="text" name="oil" id="oil" value="10" size="6" >
+    </div>
+    <div id="btn-calc">
+      <button name="calc" onclick="doCalc()" id="real-btn-calc">Calculate</button>
+    </div>
+    <div>
+      <p hidden id="warning"></p>
+    </div>
+    <div hidden id="output">
+      <table id="output-table1">
+        <thead>
+          <tr>
+          <th colspan="4">Results</th>
+        </tr>
+          <tr>
+          <th>
+            Product
+          </th>
+          <th>
+            Amount(g)
+          </th>
+          <th>
+            THC(mg)
+          </th>
+          <th>
+            CBD(mg)
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+        <tbody>
+          <tr>
+            <th style="text-align:right;">
+              Total:
+            </th>
+            <td style="text-align:right;" class="top-border">
+            </td>
+            <td style="text-align:right;" class="top-border">
+            </td>
+            <td style="text-align:right;" class="top-border">
+            </td>
+          </tr>
+          <tr>
+            <th style="text-align:right;">
+              Total/ml:
+            </th>
+            <td style="text-align:right;"></td>
+            <td style="text-align:right;"></td>
+            <td style="text-align:right;"></td>
+          </tr>
+          <tr>
+            <th style="text-align:right;">
+              Total/drop:
+            </th>
+            <td style="text-align:right;"></td>
+            <td style="text-align:right;"></td>
+            <td style="text-align:right;"></td>
+          </tr>
+        </tbody>
+
+      </table>
+      <div id="div-btn-clip">
+        <button id="btn-clip" name="clip" onclick="doClip()">Copy results to clipboard</button>
+      </div>
+    </div>
+
+    <!-- This is somewhere to put text that may get copied to the clipboard,
+          this will stay hidden.  BUT hidden isn't good enough.  The offscreen
+          trick still means that this is fully rendered and availible to copy to
+          the clipboard.  If you just set the element to "hidden" it won't
+          copy to the clipboard (at least won't in safari 14.0)
+
+          wrap="hard" is needed to preserve newlines in some browsers
+    -->
+    <textarea id="clipboard-staging" class="offscreen" wrap="hard"></textarea>
+
+    <script>
+
+      function doCalc(){
+
+        var nrows = document.getElementById('input-table').tBodies[0].rows.length;
+        var outputTab = document.getElementById("output-table1");
+
+        if (nrows <= 0){
+          document.getElementById("warning").innerHTML = "You must add one or more rows, add data, and press <b>Calculate</b>";
+          document.getElementById("warning").style.display = "block";
+        } else {
+          var totalAmount = 0.0;
+          var totalTHC = 0.0;
+          var totalCBD = 0.0;
+
+          // Remove any rows
+          var new_tbody = document.createElement('tbody');
+          outputTab.replaceChild(new_tbody, outputTab.tBodies[0])
+
+          // empty Clipboard
+          var clipboard = ""
+
+          for( rowIndex = 0; rowIndex < document.getElementById('input-table').tBodies[0].rows.length ; rowIndex++){
+            var row = document.getElementById('input-table').tBodies[0].rows[rowIndex];
+            var product = row.cells[0].firstChild.value;
+            var amount = Number(row.cells[1].firstChild.value);
+            var thcPercent = Number(row.cells[2].firstChild.value)
+            var thc = amount * 10.0 * thcPercent;
+            var cbdPercent = Number(row.cells[3].firstChild.value)
+            var cbd = amount * 10.0 * cbdPercent;
+
+            totalAmount += amount;
+            totalTHC += thc;
+            totalCBD += cbd;
+
+            // Output results for each product into output table
+            var r = outputTab.tBodies[0].insertRow(-1);
+            var cell = r.appendChild(document.createElement("th")); // need to do this for th instead of a td
+            cell.style.textAlign = "left"
+            cell.innerHTML = product;
+            var cell = r.insertCell(-1);
+            cell.style.textAlign = "right"
+            cell.innerHTML = amount.toFixed(1);
+            var cell = r.insertCell(-1);
+            cell.style.textAlign = "right"
+            cell.innerHTML = thc.toFixed(1);
+            var cell = r.insertCell(-1);
+            cell.style.textAlign = "right"
+            cell.innerHTML = cbd.toFixed(1);
+
+            // Also output results to string for clipboard
+            clipboard = clipboard + amount.toFixed(1) + " grams " + product + ": THC " + thcPercent.toFixed(1) + "%, CBD " + cbdPercent.toFixed(1) + "%\n";
+          }
+
+          // Output summary info to output table
+          var oil = document.getElementById("oil").value;
+          var dropsPerMl = 20.0;
+
+          outputTab.tBodies[1].rows[0].cells[1].innerHTML = totalAmount.toFixed(1);
+          outputTab.tBodies[1].rows[0].cells[2].innerHTML = totalTHC.toFixed(1);
+          outputTab.tBodies[1].rows[0].cells[3].innerHTML = totalCBD.toFixed(1);
+
+          outputTab.tBodies[1].rows[1].cells[2].innerHTML = (totalTHC/oil).toFixed(1);
+          outputTab.tBodies[1].rows[1].cells[3].innerHTML = (totalCBD/oil).toFixed(1);
+
+          outputTab.tBodies[1].rows[2].cells[2].innerHTML = (totalTHC/oil/dropsPerMl).toFixed(1);
+          outputTab.tBodies[1].rows[2].cells[3].innerHTML = (totalCBD/oil/dropsPerMl).toFixed(1);
+
+          document.getElementById("output").style.display = "block";
+
+          //Output summary info to clipboard string
+          clipboard = clipboard + oil + " ml oil\n";
+          clipboard = clipboard + "Total: " + totalAmount.toFixed(1) + " grams, THC " + totalTHC.toFixed(1) + " mg, CBD " + totalCBD.toFixed(1) + " mg\n"
+          clipboard = clipboard + "THC: " + (totalTHC/oil).toFixed(1) + " mg/ml, CBD: " + (totalCBD/oil).toFixed(1) + " mg/ml\n"
+          clipboard = clipboard + "THC: " + (totalTHC/oil/dropsPerMl).toFixed(1) + " mg/drop, CBD: " + (totalCBD/oil/dropsPerMl).toFixed(1) + " mg/drop"
+
+          //Set element used to hold clipboard data to value of clipboard string
+          document.getElementById("clipboard-staging").value = clipboard;
+
+          document.getElementById("btn-clip").focus();
+
+        }
+
+      }
+
+      function appendRow(t){
+
+        document.getElementById("warning").style.display = "none";
+        document.getElementById("output").style.display = "none";
+
+        var r = t.tBodies[0].insertRow(-1);
+
+        var cell1 = r.insertCell(0);
+        var input1 = document.createElement("INPUT");
+        input1.placeholder = "Product";
+        input1.type = "text";
+        input1.focus();
+        input1.autofocus = true;
+        input1.required = true;
+        cell1.appendChild(input1);
+        input1.focus();
+
+        var cell2 = r.insertCell(1);
+        var input2 = document.createElement("INPUT");
+        input2.placeholder = "Amount";
+        input2.type = "number";
+        input2.min = 0.0;
+        input2.required = true;
+        input2.size =6;
+        input2.step =0.1;
+        input2.className = "input-numeric";
+        cell2.appendChild(input2);
+
+        var cell3 = r.insertCell(2);
+        var input3 = document.createElement("INPUT");
+        input3.placeholder = "THC%";
+        input3.type = "number";
+        input3.min = 0.0;
+        input3.max = 100.0;
+        input3.step = 0.1;
+        input3.required = true;
+        input3.size = 6;
+        input3.className = "input-numeric";
+        cell3.appendChild(input3);
+
+        var cell4 = r.insertCell(3);
+        var input4 = document.createElement("INPUT");
+        input4.placeholder = "CBD%";
+        input4.type = "number";
+        input4.min = 0.0;
+        input4.max = 100.0;
+        input4.step = 0.1;
+        input4.required = true;
+        input4.size = 6;
+        input4.className = "input-numeric";
+        cell4.appendChild(input4);
+
+        var cell5 = r.insertCell(4);
+        var button5 = document.createElement("BUTTON");
+        button5.innerHTML = "Delete";
+        button5.addEventListener("click", function(){deletePressed(this)} );
+        cell5.appendChild(button5);
+
+        establishTabSequence();
+
+      }
+
+      function deletePressed(tr){
+        tab = tr.parentNode.parentNode.parentNode.parentNode;
+        rowNum = tr.parentNode.parentNode.rowIndex ;
+        //alert("delete row "+ tab + "["+rowNum+"]");
+        tab.deleteRow(rowNum);
+        document.getElementById("output").style.display = "none";
+        establishTabSequence();
+
+      }
+
+      appendRow(document.getElementById("input-table"));
+
+      function doClip(){
+        // pretty much ripped right off w3schools.com
+        if (navigator.clipboard) {
+          var copyText = document.getElementById("clipboard-staging");
+
+          copyText.select();
+          copyText.setSelectionRange(0, 2000); /*For mobile devices*/
+
+          /* Copy the text inside the text field */
+          document.execCommand("copy");
+
+          // alert(copyText.value);
+
+          return;
+
+        }
+      }
+
+      /* establishTabSequence - Default tab sequence is OK in firefox, a mess in
+          Safari, so we need a custom tab sequence.
+          Tabbing needs to go in follwoing sequence:
+            - across the input table from left to right - skipping delete
+              button at end of row (want to make it hard to delete)
+            - "add row" button
+            - oil amount input
+            - then Calculate Button
+            - finally the copy to clipboard button
+
+          Because adding a row to the table will screw up the tab order, the
+          tab sequence needs to be re-established after each row insert or delete
+          from that table.  Could maybe do this with events (i think), but I'm
+          just going to make a function that's called from the routines to append Row
+          and delete Row.
+      */
+      function establishTabSequence(){
+
+        var tagIndexNum = 1;
+
+        // Set tabe sequence in table.
+        for( rowIndex = 0; rowIndex < document.getElementById('input-table').tBodies[0].rows.length ; rowIndex++){
+          var row = document.getElementById('input-table').tBodies[0].rows[rowIndex];
+          row.cells[0].firstChild.tabIndex=tagIndexNum;
+          tagIndexNum = tagIndexNum + 1;
+          row.cells[1].firstChild.tabIndex=tagIndexNum;
+          tagIndexNum = tagIndexNum + 1;
+          row.cells[2].firstChild.tabIndex=tagIndexNum;
+          tagIndexNum = tagIndexNum + 1;
+          row.cells[3].firstChild.tabIndex=tagIndexNum;
+          tagIndexNum = tagIndexNum + 1;
+        }
+        // Next is add-row button
+        document.getElementById('btn-add-row').tabIndex=tagIndexNum;
+        tagIndexNum = tagIndexNum + 1;
+        // oil amount input field...
+        document.getElementById('oil').tabIndex=tagIndexNum;
+        tagIndexNum = tagIndexNum + 1;
+        // calculate button
+        document.getElementById('real-btn-calc').tabIndex=tagIndexNum;
+        tagIndexNum = tagIndexNum + 1;
+        // copy to clipboard button
+        document.getElementById('btn-clip').tabIndex=tagIndexNum;
+
+
+      }
+
+    </script>
+  </body>
+</html>

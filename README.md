@@ -8,8 +8,9 @@ You probably want to go here: <https://dan-jc-h.github.io/canblend/canblend.html
 
 ### History
 
-+---+---+
-|Who|When|
-+---+---+
-|DJCH|2022-12-09|
-+---+---+
+
+|Who |   When   | What |
+|----|----------| ---- |
+|DJCH|2022-12-09| Initially put in github |
+|DJCH|2023-01-28| Tidy up README (and try out CodeSpaces)
+
